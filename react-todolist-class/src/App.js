@@ -25,9 +25,7 @@ class App extends Component {
         }
       ],
       navState: 'all',
-      _todos: [],
     };
-    this.state._todos = this.state.todos;
   }
 
   generateId = () => {
@@ -43,11 +41,11 @@ class App extends Component {
           completed: false
         }],
       })
-      this.setState({
-        _todos: this.state.todos
-      })
+
+      e.target.value = '';
       console.log(this.state.todos);
     }
+
   }
 
   removeTodo = id => {
@@ -56,28 +54,19 @@ class App extends Component {
     this.setState({
       todos: todos.filter(todo => todo.id !== id)
     });
-    this.setState({
-      _todos: this.state.todos
-    })
   }
 
   toggleTodo = id => {
     const { todos } = this.state;
     this.setState({
-      todos: todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed} : todo)
-    })
-    this.setState({
-      _todos: this.state.todos
+      todos: todos.map(todo => todo.id === id ? { ...todo, completed: !todo.completed } : todo)
     })
   }
 
   toggleCompletedAll = () => {
     const { todos } = this.state;
     this.setState({
-      todos: todos.map(todo => ({...todo, completed: true}))
-    })
-    this.setState({
-      _todos: this.state.todos
+      todos: todos.map(todo => ({ ...todo, completed: true }))
     })
   }
 
@@ -86,45 +75,27 @@ class App extends Component {
     this.setState({
       todos: todos.filter(todo => !todo.completed)
     })
-    this.setState({
-      _todos: this.state.todos
-    })
-  }
-
-  selectState = (e) => {
-    const id = e.target.id;
-    const { todos } = this.state;
-    this.setState({
-      _todos: todos
-    })
-    const { _todos } = this.state;
-
-    if (id === 'completed') {
-      this.setState({
-        _todos: todos.filter(todo => todo.completed)
-      })
-    } else if (id === 'active') {
-      this.setState({
-        _todos: todos.filter(todo => !todo.completed)
-      })
-    } else {
-      this.setState({
-        _todos: todos
-      })
-    }
-    return _todos;
   }
 
   addStyle = e => {
     const navChildren = e.target.parentNode.children;
     const id = e.target.id;
     [...navChildren].forEach(navItem => {
-      navItem.classList.toggle('active', navItem.id === id)});
+      navItem.classList.toggle('active', navItem.id === id)
+    });
 
     this.setState({
       navState: id,
     })
   }
+
+  renderTodo = () => {
+    const { todos, navState } = this.state;
+
+    if (navState === 'completed') { return todos.filter(todo => todo.completed) }
+    if (navState === 'active') { return todos.filter(todo => !todo.completed) }
+    return todos;
+  };
 
   render() {
     return (
@@ -140,31 +111,31 @@ class App extends Component {
         />
 
         <ul className="nav" onClick={this.addStyle}>
-          <li id="all" className="active" onClick={this.selectState}>All</li>
-          <li id="active" onClick={this.selectState}>Active</li>
-          <li id="completed" onClick={this.selectState}>Completed</li>
+          <li id="all" className="active">All</li>
+          <li id="active">Active</li>
+          <li id="completed">Completed</li>
         </ul>
 
         <ul className="todos">
-          {this.state._todos.map(todo => <li id={todo.id} key={todo.id} className="todo-item">
-                <input
-                  className="custom-checkbox"
-                  type="checkbox"
-                  id={`ck-${todo.id}`}
-                  checked={todo.completed}
-                  onChange={() => this.toggleTodo(todo.id)}
-                />
-                  <label htmlFor={`ck-${todo.id}`}>{todo.content}</label>
-                  <i className="remove-todo far fa-times-circle" onClick={() => this.removeTodo(todo.id)}></i>
+          {this.renderTodo().map(todo => <li id={todo.id} key={todo.id} className="todo-item">
+            <input
+              className="custom-checkbox"
+              type="checkbox"
+              id={`ck-${todo.id}`}
+              checked={todo.completed}
+              onChange={() => this.toggleTodo(todo.id)}
+            />
+            <label htmlFor={`ck-${todo.id}`}>{todo.content}</label>
+            <i className="remove-todo far fa-times-circle" onClick={() => this.removeTodo(todo.id)}></i>
           </li>)}
         </ul>
         <div className="footer">
           <div className="complete-all">
-            <input className="custom-checkbox" type="checkbox" id="ck-complete-all" onChange={this.toggleCompletedAll}/>
+            <input className="custom-checkbox" type="checkbox" id="ck-complete-all" onChange={this.toggleCompletedAll} />
             <label htmlFor="ck-complete-all">Mark all as complete</label>
           </div>
           <div className="clear-completed">
-    <button className="btn" onClick={this.removeTodoAll}>Clear completed (<span className="completed-todos">{this.state.todos.filter(todo => todo.completed).length}</span>)</button>
+            <button className="btn" onClick={this.removeTodoAll}>Clear completed (<span className="completed-todos">{this.state.todos.filter(todo => todo.completed).length}</span>)</button>
             <strong className="active-todos">{this.state.todos.filter(todo => !todo.completed).length}</strong> items left
         </div>
         </div>
