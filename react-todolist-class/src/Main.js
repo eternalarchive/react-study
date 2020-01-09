@@ -81,12 +81,12 @@ class Main extends Component {
     })
   }
 
-  addStyle = e => {
-    const navChildren = e.target.parentNode.children;
-    const id = e.target.id;
-    [...navChildren].forEach(navItem => {
-      navItem.classList.toggle('active', navItem.id === id)
-    });
+  addStyle = id => {
+    // const navChildren = e.target.parentNode.children;
+    // const id = e.target.id;
+    // [...navChildren].forEach(navItem => {
+    //   navItem.classList.toggle('active', navItem.id === id)
+    // });
 
     this.setState({
       navState: id,
@@ -103,11 +103,12 @@ class Main extends Component {
 
   render() {
     const { todos, navState } = this.state;
+    const navItems = [ 'all', 'active', 'completed' ];
     return (
      <div className="container">
       <Header todos={todos} nav={navState}/>
       <InputTodo addTodo={this.addTodo} generateId={this.generateId}/>
-      <Navigation addStyle={this.addStyle}/>
+      <Navigation navItems={navItems} navState={navState} addStyle={this.addStyle}/>
       <TodoList todos={todos} nav={navState} render={this.renderTodo} toggle={this.toggleTodo} remove={this.removeTodo}/>
       <Footer todos={todos} nav={navState} removeAll={this.removeTodoAll} toggleAll={this.toggleCompletedAll}/>
      </div>
