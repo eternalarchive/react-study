@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
+import Header from './components/Header';
+import Navigation from './components/Navigation';
+import InputTodo from './components/InputTodo';
+import TodoList from './components/TodoList';
+import Footer from './components/Footer';
 import './App.css';
 
-class App extends Component {
+class Main extends Component {
   constructor(props) {
     super(props);
 
-    Object.getOwnPropertyNames(App.prototype).forEach(key => this[key] = this[key].bind(this));
+    Object.getOwnPropertyNames(Main.prototype).forEach(key => this[key] = this[key].bind(this));
     this.state = {
       todos: [
         {
@@ -97,50 +102,17 @@ class App extends Component {
   };
 
   render() {
+    const { todos, navState } = this.state;
     return (
-      <div className="container">
-        <h1 className="title">Todos</h1>
-        <div className="ver">2.0</div>
-
-        <input
-          className="input-todo"
-          placeholder="What needs to be done?"
-          onKeyPress={this.addTodo}
-          autoFocus
-        />
-
-        <ul className="nav" onClick={this.addStyle}>
-          <li id="all" className="active">All</li>
-          <li id="active">Active</li>
-          <li id="completed">Completed</li>
-        </ul>
-
-        <ul className="todos">
-          {this.renderTodo().map(todo => <li id={todo.id} key={todo.id} className="todo-item">
-            <input
-              className="custom-checkbox"
-              type="checkbox"
-              id={`ck-${todo.id}`}
-              checked={todo.completed}
-              onChange={() => this.toggleTodo(todo.id)}
-            />
-            <label htmlFor={`ck-${todo.id}`}>{todo.content}</label>
-            <i className="remove-todo far fa-times-circle" onClick={() => this.removeTodo(todo.id)}></i>
-          </li>)}
-        </ul>
-        <div className="footer">
-          <div className="complete-all">
-            <input className="custom-checkbox" type="checkbox" id="ck-complete-all" onChange={this.toggleCompletedAll} />
-            <label htmlFor="ck-complete-all">Mark all as complete</label>
-          </div>
-          <div className="clear-completed">
-            <button className="btn" onClick={this.removeTodoAll}>Clear completed (<span className="completed-todos">{this.state.todos.filter(todo => todo.completed).length}</span>)</button>
-            <strong className="active-todos">{this.state.todos.filter(todo => !todo.completed).length}</strong> items left
-        </div>
-        </div>
-      </div>
+     <div className="container">
+      <Header todos={todos} nav={navState}/>
+      <InputTodo addTodo={this.addTodo} generateId={this.generateId}/>
+      <Navigation addStyle={this.addStyle}/>
+      <TodoList todos={todos} nav={navState} render={this.renderTodo} toggle={this.toggleTodo} remove={this.removeTodo}/>
+      <Footer todos={todos} nav={navState} removeAll={this.removeTodoAll} toggleAll={this.toggleCompletedAll}/>
+     </div>
     )
   };
 }
 
-export default App;
+export default Main;
